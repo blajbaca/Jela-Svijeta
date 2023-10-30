@@ -1,6 +1,7 @@
 <?php
-require 'vendor/autoload.php';
-require_once 'config/Database.php';
+
+require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/../config/Database.php';
 
 $faker = Faker\Factory::create();
 $languageData = ['en_EN','de_DE','fr_FR'];

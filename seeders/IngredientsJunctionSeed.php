@@ -1,6 +1,7 @@
 <?php
-require 'config/database.php';
-require 'vendor/autoload.php'; 
+
+require __DIR__ . '/../config/Database.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 $database = new Database();
 $db = $database->Connect();
@@ -12,9 +13,8 @@ try {
         $recipe_id = $faker->numberBetween(1, 50); 
         $ingredient_id = $faker->numberBetween(1, 50); 
 
-        $sql = "INSERT INTO recipe_ingredients (recipe_id, ingredient_id)
-                VALUES ($recipe_id, $ingredient_id)";
-        $db->exec($sql);
+        $stmt = $db->prepare("INSERT INTO recipe_ingredients (recipe_id, ingredient_id) VALUES (?,?)"); 
+        $stmt->execute([$recipe_id,$ingredient_id]);
     }
 
     echo "Data seeding for 'recipe_ingredients' completed.";

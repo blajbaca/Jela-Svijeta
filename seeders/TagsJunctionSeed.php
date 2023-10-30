@@ -1,6 +1,7 @@
 <?php
-require 'config/database.php';
-require 'vendor/autoload.php';
+require __DIR__ . '/../config/Database.php';
+require __DIR__ . '/../vendor/autoload.php';
+
 $faker = Faker\Factory::create();
 
 $database = new Database();
@@ -11,9 +12,8 @@ try {
         $recipe_id = $faker->numberBetween(1, 50);
         $tag_id = $faker->numberBetween(1, 50);
 
-        $sql = "INSERT INTO recipe_tags (recipe_id, tag_id)
-                VALUES ($recipe_id, $tag_id)";
-        $db->exec($sql);
+        $stmt = $db->prepare("INSERT INTO recipe_tags (recipe_id, tag_id) VALUES (?,?)");
+        $stmt->execute([$recipe_id,$tag_id]);
     }
 
     echo "Data seeding for 'recipe_tags' completed.";

@@ -1,7 +1,7 @@
 <?php
 
-require 'config/database.php';
-require 'vendor/autoload.php';
+require __DIR__ . '/../config/Database.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 $database = new Database();
 $db = $database->Connect();
@@ -15,9 +15,8 @@ try {
         $category_id = $faker->numberBetween(1, 5);
         $language_id = $faker->numberBetween(1, 3);
 
-        $sql = "INSERT INTO recipes (titleEn, descriptionEn, status, category_id, language_id)
-                VALUES ('$titleEn', '$descriptionEn', '$status', $category_id, $language_id)";
-        $db->exec($sql);
+        $stmt = $db->prepare("INSERT INTO recipes (titleEn, descriptionEn, status, category_id, language_id) VALUES (?,?,?,?,?)");
+        $stmt->execute([$titleEn,$descriptionEn,$status,$category_id,$language_id]);
     }
 
     for ($i = 1; $i <= 50; $i++) { 
@@ -28,9 +27,8 @@ try {
         $category_id = $faker->numberBetween(1, 5);
         $language_id = $faker->numberBetween(1, 3);
 
-        $sql = "INSERT INTO recipes (titleDe, descriptionDe, status, category_id, language_id)
-                VALUES ('$titleDe', '$descriptionDe', '$status', $category_id, $language_id)";
-        $db->exec($sql);
+        $stmt = $db->prepare("INSERT INTO recipes (titleDe, descriptionDe, status, category_id, language_id) VALUES (?,?,?,?,?)");
+        $stmt->execute([$titleDe,$descriptionDe,$status,$category_id,$language_id]);
     }
 
     for ($i = 1; $i <= 50; $i++) { 
@@ -41,9 +39,8 @@ try {
         $category_id = $faker->numberBetween(1, 5);
         $language_id = $faker->numberBetween(1, 3);
 
-        $sql = "INSERT INTO recipes (titleFr, descriptionFr, status, category_id, language_id)
-                VALUES ('$titleFr', '$descriptionFr', '$status', $category_id, $language_id)";
-        $db->exec($sql);
+        $stmt = $db->prepare("INSERT INTO recipes (titleFr, descriptionFr, status, category_id, language_id) VALUES (?,?,?,?,?)");
+        $stmt->execute([$titleFr,$descriptionFr,$status,$category_id,$language_id]);
     }
 
     echo "Data seeding for 'recipes' completed.";

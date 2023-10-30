@@ -1,6 +1,7 @@
 <?php 
-require 'config/database.php';
-require 'vendor/autoload.php';
+
+require __DIR__ . '/../config/Database.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 $database = new Database();
 $db = $database->Connect();
@@ -8,32 +9,29 @@ $db = $database->Connect();
 try {
     for ($i = 1; $i <= 20; $i++) {
         $faker = Faker\Factory::create('en_US');
-        $titleEn = $faker->realText(1); 
+        $titleEn = $faker->realText(10); 
         $slug = $faker->slug;
 
-        $sql = "INSERT INTO ingredients (titleEn, slug) 
-                VALUES ('$titleEn', '$slug')";
-        $db->exec($sql);
+        $stmt = $db->prepare("INSERT INTO ingredients (titleEn, slug) VALUES (?,?)");
+        $stmt->execute([$titleEn, $slug]);
     }
 
     for ($i = 1; $i <= 20; $i++) {
         $faker = Faker\Factory::create('de_DE');
-        $titleDe = $faker->realText(1); 
+        $titleDe = $faker->realText(10); 
         $slug = $faker->slug;
 
-        $sql = "INSERT INTO ingredients (titleDe, slug) 
-                VALUES ('$titleDe', '$slug')";
-        $db->exec($sql);
+        $stmt = $db->prepare("INSERT INTO ingredients (titleDe, slug) VALUES (?,?)");
+        $stmt->execute([$titleDe, $slug]);
     }
 
     for ($i = 1; $i <= 20; $i++) {
         $faker = Faker\Factory::create('fr_FR');
-        $titleFr = $faker->realText(1); 
+        $titleFr = $faker->realText(10); 
         $slug = $faker->slug;
 
-        $sql = "INSERT INTO ingredients (titleFr, slug) 
-                VALUES ('$titleFr', '$slug')";
-        $db->exec($sql);
+        $stmt = $db->prepare("INSERT INTO ingredients (titleFr, slug) VALUES (?,?)");
+        $stmt->execute([$titleFr, $slug]);
     }
 
     echo "Data seeding completed.";

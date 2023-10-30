@@ -1,19 +1,26 @@
 <?php
-require 'config/database.php';
+require __DIR__ . '/config/Database.php';
 
-
-$migrationFiles = [
+$nonJunctionMigrationFiles = [
     'migrations\CategoriesTableMigration.php',
-    'migrations\IngredientJunctionTable.php',
     'migrations\IngredientsTableMigration.php',
     'migrations\LanguagesTableMigration.php',
     'migrations\RecipesTableMigration.php',
+    'migrations\TagsTableMigration.php',
+];
+
+$junctionMigrationFiles = [
+    'migrations\IngredientJunctionTable.php',
     'migrations\TagJunctionTableMigration.php',
-    'migrations\TagsTableMigration.php'
 ];
 
 try {
-    foreach ($migrationFiles as $migrationFile) {
+    foreach ($nonJunctionMigrationFiles as $migrationFile) {
+        require $migrationFile;
+        echo "Migration script $migrationFile executed successfully." . PHP_EOL;
+    }
+
+    foreach ($junctionMigrationFiles as $migrationFile) {
         require $migrationFile;
         echo "Migration script $migrationFile executed successfully." . PHP_EOL;
     }

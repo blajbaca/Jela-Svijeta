@@ -1,5 +1,5 @@
 <?php
-require 'config/database.php';
+require __DIR__ . '/config/Database.php';
 
 $database = new Database();
 $db = $database->Connect();
