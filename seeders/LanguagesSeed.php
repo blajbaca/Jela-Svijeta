@@ -1,10 +1,8 @@
 <?php
-
 require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/../config/Database.php';
 
-$faker = Faker\Factory::create();
-$languageData = ['en_EN','de_DE','fr_FR'];
+$languageData = ['en_EN', 'de_DE', 'fr_FR'];
 
 $db = new Database();
 $pdo = $db->Connect();
@@ -15,7 +13,7 @@ $tableName = 'languages';
 foreach ($languageData as $language) {
     $sql = "INSERT INTO $tableName (name) VALUES (:name)";
     $stmt = $pdo->prepare($sql);
-    $stmt->bindParam(':name', $language['name']);
+    $stmt->bindParam(':name', $language);
     $stmt->execute();
 }
 
