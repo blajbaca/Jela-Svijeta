@@ -3,7 +3,8 @@
 require 'config/database.php';
 require 'vendor/autoload.php';
 
-
+$database = new Database();
+$db = $database->Connect();
 
 try {
     for ($i = 1; $i <= 50; $i++) { 

@@ -3,6 +3,9 @@ require 'config/database.php';
 require 'vendor/autoload.php';
 $faker = Faker\Factory::create();
 
+$database = new Database();
+$db = $database->Connect();
+
 try {
     for ($i = 1; $i <= 50; $i++) {
         $recipe_id = $faker->numberBetween(1, 50);

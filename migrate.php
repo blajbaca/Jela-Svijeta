@@ -1,6 +1,7 @@
 <?php
 require 'config/database.php';
 
+
 $migrationFiles = [
     'migrations\CategoriesTableMigration.php',
     'migrations\IngredientJunctionTable.php',

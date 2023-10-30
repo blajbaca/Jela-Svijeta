@@ -1,11 +1,14 @@
-<?php 
+<?php
 require 'config/database.php';
 require 'vendor/autoload.php';
+
+$database = new Database();
+$db = $database->Connect();
 
 try {
     for ($i = 1; $i <= 20; $i++) {
         $faker = Faker\Factory::create('en_US');
-        $titleEn = $faker->realText(5); 
+        $titleEn = $faker->realText(5);
         $slug = $faker->slug;
 
         $sql = "INSERT INTO categories (titleEn, slug) 
@@ -15,7 +18,7 @@ try {
 
     for ($i = 1; $i <= 20; $i++) {
         $faker = Faker\Factory::create('de_DE');
-        $titleDe = $faker->realText(5); 
+        $titleDe = $faker->realText(5);
         $slug = $faker->slug;
 
         $sql = "INSERT INTO categories (titleDe, slug) 
@@ -25,7 +28,7 @@ try {
 
     for ($i = 1; $i <= 20; $i++) {
         $faker = Faker\Factory::create('fr_FR');
-        $titleFr = $faker->realText(5); 
+        $titleFr = $faker->realText(5);
         $slug = $faker->slug;
 
         $sql = "INSERT INTO categories (titleFr, slug) 

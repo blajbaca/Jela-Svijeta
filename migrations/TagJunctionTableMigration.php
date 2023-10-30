@@ -1,6 +1,9 @@
 <?php
 require 'config/database.php';
 
+$database = new Database();
+$db = $database->Connect();
+
 try {
     $sql = "CREATE TABLE recipe_tags (
         recipe_id INT,

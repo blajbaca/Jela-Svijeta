@@ -1,6 +1,9 @@
 <?php
 require 'config/database.php';
 
+$database = new Database();
+$db = $database->Connect();
+
 try {
     $sql = "CREATE TABLE categories (
         category_id INT AUTO_INCREMENT PRIMARY KEY,

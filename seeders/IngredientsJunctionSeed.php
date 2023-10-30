@@ -2,6 +2,9 @@
 require 'config/database.php';
 require 'vendor/autoload.php'; 
 
+$database = new Database();
+$db = $database->Connect();
+
 $faker = Faker\Factory::create();
 
 try {
