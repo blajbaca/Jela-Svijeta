@@ -31,27 +31,32 @@ class RecipeModel
 
     public function getRecipes()
     {
-
         $sql = "
-        SELECT
-            recipe.recipe_id,
-            recipe.titleEn AS titleEn,
-            recipe.titleDe AS titleDe,
-            recipe.titleFr AS titleFr,
-            recipe.descriptionEn AS descriptionEn,
-            recipe.descriptionDe AS descriptionDe,
-            recipe.descriptionFr AS descriptionFr,
-            recipe.status,
-            category.title AS category_title,
-            tag.title AS tag_title,
-            ingredient.title AS ingredient_title
-        FROM recipes AS recipe
-        LEFT JOIN recipe_tags AS recipe_tag ON recipe.recipe_id = recipe_tag.recipe_id
-        LEFT JOIN tags AS tag ON recipe_tag.tag_id = tag.tag_id
-        LEFT JOIN recipe_ingredients AS recipe_ingredient ON recipe.recipe_id = recipe_ingredient.recipe_id
-        LEFT JOIN ingredients AS ingredient ON recipe_ingredient.ingredient_id = ingredient.ingredient_id
-        LEFT JOIN categories AS category ON recipe.category_id = category.category_id
-        ";
+    SELECT
+        recipe.recipe_id,
+        recipe.titleEn AS titleEn,
+        recipe.titleDe AS titleDe,
+        recipe.titleFr AS titleFr,
+        recipe.descriptionEn AS descriptionEn,
+        recipe.descriptionDe AS descriptionDe,
+        recipe.descriptionFr AS descriptionFr,
+        recipe.status,
+        GROUP_CONCAT(DISTINCT category.titleEn) AS category_titleEn,
+        GROUP_CONCAT(DISTINCT category.titleDe) AS category_titleDe,
+        GROUP_CONCAT(DISTINCT category.titleFr) AS category_titleFr,
+        GROUP_CONCAT(DISTINCT tag.titleEn) AS tag_titleEn,
+        GROUP_CONCAT(DISTINCT tag.titleDe) AS tag_titleDe,
+        GROUP_CONCAT(DISTINCT tag.titleFr) AS tag_titleFr,
+        GROUP_CONCAT(DISTINCT ingredient.titleEn) AS ingredient_titleEn,
+        GROUP_CONCAT(DISTINCT ingredient.titleDe) AS ingredient_titleDe,
+        GROUP_CONCAT(DISTINCT ingredient.titleFr) AS ingredient_titleFr
+    FROM recipes AS recipe
+    LEFT JOIN recipe_tags AS recipe_tag ON recipe.recipe_id = recipe_tag.recipe_id
+    LEFT JOIN tags AS tag ON recipe_tag.tag_id = tag.tag_id
+    LEFT JOIN recipe_ingredients AS recipe_ingredient ON recipe.recipe_id = recipe_ingredient.recipe_id
+    LEFT JOIN ingredients AS ingredient ON recipe_ingredient.ingredient_id = ingredient.ingredient_id
+    LEFT JOIN categories AS category ON recipe.category_id = category.category_id
+    GROUP BY recipe.recipe_id";
 
         try {
             $stmt = $this->db->prepare($sql);
@@ -59,79 +64,54 @@ class RecipeModel
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $result;
         } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage();
             return null;
         }
     }
 
-    function filterRecipes($per_page, $page, $category, $tags, $with, $lang, $diff_time)
+    public function filterRecipes($per_page, $page, $category, $tags, $with, $lang, $diff_time, $recipes)
     {
-        $database = new Database();
-        $db = $database->Connect();
+        if ($recipes === null) {
+            return null;
+        }
+
+        $filteredRecipes = [];
 
         $titleColumn = "title" . ucfirst($lang);
         $descriptionColumn = "description" . ucfirst($lang);
 
-        $columns = [
-            "recipe.recipe_id",
-            "recipe.$titleColumn AS title",
-            "recipe.$descriptionColumn AS description",
-            "recipe.status",
-        ];
+        foreach ($recipes as $recipe) {
+            $recipeMatchesCategory = $category === null || ($category === 'NULL' && $recipe['category_id'] === null) || $recipe['category_id'] == $category;
+            
+            $recipeMatchesDiffTime = $diff_time === null || $recipe['updated_at'] >= $diff_time;
 
-        if (in_array('category', explode(',', $with))) {
-            $columns[] = "category.$titleColumn AS category_title";
-        }
+            if ($recipeMatchesCategory  && $recipeMatchesDiffTime) {
+                $filteredRecipe = [
+                    'recipe_id' => $recipe['recipe_id'],
+                    'title' => $recipe[$titleColumn],
+                    'description' => $recipe[$descriptionColumn],
+                    'status' => $recipe['status'],
+                ];
 
-        if (in_array('tags', explode(',', $with))) {
-            $columns[] = "tag.$titleColumn AS tag_title";
-        }
+                if (in_array('category', explode(',', $with))) {
+                    $filteredRecipe['category_title'] = $recipe["category_$titleColumn"];
+                }
 
-        if (in_array('ingredients', explode(',', $with))) {
-            $columns[] = "ingredient.$titleColumn AS ingredient_title";
-        }
+                if (in_array('tags', explode(',', $with))) {
+                    $filteredRecipe['tag_title'] = $recipe["tag_$titleColumn"];
+                }
 
-        $selectClause = implode(', ', $columns);
+                if (in_array('ingredients', explode(',', $with))) {
+                    $filteredRecipe['ingredient_title'] = $recipe["ingredient_$titleColumn"];
+                }
 
-        $sql = "SELECT $selectClause
-    FROM recipes AS recipe
-    LEFT JOIN recipe_tags AS recipe_tag ON recipe.recipe_id = recipe_tag.recipe_id
-    LEFT JOIN tags AS tag ON recipe_tag.tag_id = tag.tag_id
-    LEFT JOIN recipe_ingredients AS recipe_ingredient ON recipe.recipe_id = recipe_ingredient.recipe_id
-    LEFT JOIN ingredients AS ingredient ON recipe_ingredient.ingredient_id = ingredient.ingredient_id
-    LEFT JOIN categories AS category ON recipe.category_id = category.category_id
-    WHERE recipe.language_id = :lang";
-
-        if ($category !== null) {
-            $sql .= " AND category.category_id " . ($category === 'NULL' ? 'IS NULL' : "= :category");
-        }
-
-        if ($tags !== null) {
-            $sql .= " AND tag.tag_id IN (" . implode(',', $tags) . ")";
-        }
-
-        $sql .= " LIMIT :per_page OFFSET :offset";
-
-        if ($diff_time !== null) {
-            $sql .= " AND recipe.updated_at >= :diff_time";
-        }
-
-        try {
-            $stmt = $db->prepare($sql);
-            $stmt->bindParam(':lang', $lang);
-            $stmt->bindParam(':per_page', $per_page, PDO::PARAM_INT);
-            $offset = ($page - 1) * $per_page;
-            $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
-            if ($category !== null && $category !== 'NULL') {
-                $stmt->bindParam(':category', $category);
+                $filteredRecipes[] = $filteredRecipe;
             }
-            if ($diff_time !== null) {
-                $stmt->bindParam(':diff_time', $diff_time, PDO::PARAM_INT);
-            }
-            $stmt->execute();
-            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return $result;
-        } catch (PDOException $e) {
-            echo ("Failed: " . $e->getMessage());
         }
+
+        $startIndex = ($page - 1) * $per_page;
+        $filteredRecipes = array_slice($filteredRecipes, $startIndex, $per_page);
+
+        return $filteredRecipes;
     }
 }
