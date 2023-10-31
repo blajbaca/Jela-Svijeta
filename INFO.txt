@@ -1,0 +1,3 @@
+Zadatak odrađen u PHP-u 
+Faker paket korišten za stvaranje dummy podataka iako postoje problemi sa memorijom.
+Primjeri odgovora dobivenih na API na linku: https://pastebin.com/jLnvMGhk
