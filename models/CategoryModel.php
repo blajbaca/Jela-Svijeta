@@ -6,7 +6,9 @@ class CategoryModel
 {
     private $db;
     private $category_id;
-    private $title;
+    private $titleEn;
+    private $titleDe;
+    private $titleFr;
     private $slug;
 
     public function __construct($db)
@@ -14,10 +16,12 @@ class CategoryModel
         $this->db = $db;
     }
 
-    public function populate($category_id, $title, $slug)
+    public function populate($category_id, $slug, $titleEn, $titleDe, $titleFr)
     {
         $this->category_id = $category_id;
-        $this->title = $title;
+        $this->titleEn = $titleEn;
+        $this->titleDe = $titleDe;
+        $this->titleFr = $titleFr;
         $this->slug = $slug;
     }
 }

@@ -6,7 +6,9 @@ class IngredientModel
 {
     private $db;
     private $ingredient_id;
-    private $title;
+    private $titleEn;
+    private $titleDe;
+    private $titleFr;
     private $slug;
 
     public function __construct($db)
@@ -14,10 +16,12 @@ class IngredientModel
         $this->db = $db;
     }
 
-    public function populate($ingredient_id, $title, $slug)
+    public function populate($ingredient_id, $slug, $titleEn, $titleDe, $titleFr)
     {
         $this->ingredient_id = $ingredient_id;
-        $this->title = $title;
+        $this->titleEn = $titleEn;
+        $this->titleDe = $titleDe;
+        $this->titleFr = $titleFr;
         $this->slug = $slug;
     }
 }
