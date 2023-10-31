@@ -1,7 +1,6 @@
 <?php
 
-require 'config/Database.php';
-require 'models/RecipeModel.php';
+require __DIR__ . '/../../models/RecipeModel.php';
 
 $database = new Database();
 $db = $database->Connect();

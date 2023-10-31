@@ -1,6 +1,6 @@
 <?php
 
-include_once 'config/Database.php';
+require __DIR__ . '/../config/Database.php';
 
 class TagModel
 {

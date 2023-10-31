@@ -17,15 +17,15 @@ $junctionMigrationFiles = [
 try {
     foreach ($nonJunctionMigrationFiles as $migrationFile) {
         require $migrationFile;
-        echo "Migration script $migrationFile executed successfully." . PHP_EOL;
+        echo "\nMigration script $migrationFile executed successfully." . PHP_EOL;
     }
 
     foreach ($junctionMigrationFiles as $migrationFile) {
         require $migrationFile;
-        echo "Migration script $migrationFile executed successfully." . PHP_EOL;
+        echo "\nMigration script $migrationFile executed successfully." . PHP_EOL;
     }
 } catch (PDOException $e) {
     die("Migration failed: " . $e->getMessage());
 }
 
-echo "All migrations completed successfully." . PHP_EOL;
+echo "\nAll migrations completed successfully." . PHP_EOL;

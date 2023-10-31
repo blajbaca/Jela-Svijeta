@@ -11,11 +11,11 @@ try {
 
     foreach ($tables as $table) {
         $db->exec("DROP TABLE $table");
-        echo "Dropped table: $table" . PHP_EOL;
+        echo "\nDropped table: $table" . PHP_EOL;
     }
     $db->exec("SET FOREIGN_KEY_CHECKS=1");
 
-    echo "All tables dropped successfully." . PHP_EOL;
+    echo "\nAll tables dropped successfully." . PHP_EOL;
 } catch (PDOException $e) {
-    die("Table dropping failed: " . $e->getMessage());
+    die("\nTable dropping failed: " . $e->getMessage());
 }
